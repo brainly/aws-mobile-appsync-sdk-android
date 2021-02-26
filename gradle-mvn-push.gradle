@@ -15,7 +15,6 @@
  */
 
 apply plugin: 'maven'
-apply plugin: 'signing'
 
 version = VERSION_NAME
 group = GROUP
@@ -49,8 +48,7 @@ afterEvaluate { project ->
     repositories {
       if (project.hasProperty('SONATYPE_NEXUS_USERNAME')) {
         mavenDeployer {
-          beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
+          
           pom.groupId = GROUP
           pom.artifactId = POM_ARTIFACT_ID
           pom.version = "$VERSION_NAME-apollohotfix"
@@ -101,11 +99,6 @@ afterEvaluate { project ->
         }
       }
     }
-  }
-
-  signing {
-    required { isReleaseBuild() && gradle.taskGraph.hasTask("uploadArchives") }
-    sign configurations.archives
   }
 
   if (project.getPlugins().hasPlugin('com.android.application') ||
