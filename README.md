@@ -439,6 +439,13 @@ public void addPost() {
 }
 ```
 
+## Deployment
+
+```
+./gradlew clean build uploadArchives 
+-PRELEASE_REPOSITORY_URL=<brainly-maven> -PSONATYPE_NEXUS_USERNAME=<brainly-maven-user>
+-PSONATYPE_NEXUS_PASSWORD=<brainly-maven-password>
+```
 ## License
 
 This library is licensed under the Apache License 2.0.
