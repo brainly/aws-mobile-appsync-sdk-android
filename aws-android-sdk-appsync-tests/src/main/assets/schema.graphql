@@ -14,10 +14,13 @@ type Event @model {
     description: String
     comments: [Comment] @connection(keyName: "byEvent", fields: ["id"])
 }
-#this works on created but we then have to add _version to UpdateArticleInput
-#
+
 type Article @model
-@versioned(versionField:"version", versionInput:"expectedVersion") {
+@versioned
+@auth(rules: [
+    { allow: public provider: apiKey },
+    { allow: private provider: iam}
+]) {
     id: ID!
     author: String!
     title: String
@@ -34,10 +37,9 @@ type S3Object {
     mimeType: String
 }
 
-
-type Post @model(subscriptions: { level: public })
+type Post @model #(subscriptions: { level: public })
 @auth(rules: [
-    { allow: owner },
+    { allow: private provider: userPools },
     { allow: private provider: iam},
     { allow: public provider: apiKey }
 ]){
@@ -50,15 +52,3 @@ type Post @model(subscriptions: { level: public })
     downs: Int
     version: Int!
 }
-
-
-# After creation, we need to manually update the CreateArticleInput schema to be as follows
-#input CreateArticleInput {
-#	id: ID
-#	author: String!
-#	title: String
-#	pdf: S3ObjectInput
-#	image: S3ObjectInput
-#	version: Int
-#	_version: Int
-#}

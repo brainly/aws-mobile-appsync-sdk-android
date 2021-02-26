@@ -261,9 +261,12 @@ public class AWSAppSyncClient {
 
         SubscriptionAuthorizer subscriptionAuthorizer = new SubscriptionAuthorizer(builder);
 
-        webSocketConnectionManager = new WebSocketConnectionManager(builder.mServerUrl,
+        webSocketConnectionManager = new WebSocketConnectionManager(
+            applicationContext,
+            builder.mServerUrl,
             subscriptionAuthorizer,
-            new ApolloResponseBuilder(builder.customTypeAdapters, mApolloClient.apolloStore().networkResponseNormalizer()));
+            new ApolloResponseBuilder(builder.customTypeAdapters, mApolloClient.apolloStore().networkResponseNormalizer()),
+            builder.mSubscriptionsAutoReconnect);
     }
 
     /**
@@ -554,7 +557,7 @@ public class AWSAppSyncClient {
                     mServerUrl = mServerUrl != null ? mServerUrl : appSyncJsonObject.getString("ApiUrl");
                     mRegion = mRegion != null ? mRegion : Regions.fromName(appSyncJsonObject.getString("Region"));
 
-                    if (mUseClientDatabasePrefix) {
+                    if (mUseClientDatabasePrefix && mClientDatabasePrefix == null) {
                         // Populate the ClientDatabasePrefix from awsconfiguration.json
                         String clientDatabasePrefixFromConfigJson = null;
                         try {
